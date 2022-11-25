@@ -1,11 +1,12 @@
-﻿using System.Linq;
+﻿using Display;
+using System.Linq;
 namespace GameOfLife
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Matrix m = new RandomMatrix(10, 10, 0.25);
+            Matrix m = new RandomMatrix(20, 20, 0.25);
 
             Matrix k = new Matrix(3, 3)
             {
@@ -24,13 +25,22 @@ namespace GameOfLife
                         return 0;
                 }
             };
+            Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+            Grid display = new Grid(m.Rows, m.Columns, 2, 2);
+            Console.CursorVisible = false;
             do
             {
-                Console.Clear();
-                Console.WriteLine(m);
-                Console.WriteLine(m.Sum());
+                display.Clear();
+                for (int r = 0; r < m.Rows; r++)
+                {
+                    for (int c = 0; c < m.Columns; c++)
+                    {
+                        display.FillPixel(m[r,c] == 1 ? '\u2588' : ' ', ConsoleColor.White, r, c);
+                    }
+                }
+                display.Render();
                 m = m.Convolve(k, transformation);
-                Console.Read();
+                //Console.ReadLine();
             } while (m.Sum() > 0);
         }
     }
